@@ -1,0 +1,64 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - feat/*
+      - fix/*
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      - name: Install Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.10.12
+
+  create-release:
+    if: ${{ github.ref == 'refs/heads/main' && !contains(github.event.head_commit.message, 'chore(release):') }}
+    # needs: [format, type-check]
+    needs: [format]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checking release tag name
+        run: |
+          RELEASE_NAME=${{ github.event.release.tag_name }}
+          if [[ $RELEASE_NAME == *"beta"* ]]; then
+            exit 0
+          fi
+      - uses: actions/setup-python@v5
+        with:
+          python-version: 3.11
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: "Generate token"
+        id: generate_token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.BOT_APP_ID }}
+          private_key: ${{ secrets.BOT_PRIVATE_KEY }}
+      # Check out the code to be able to deploy
+      - name: "Checking out code"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ steps.generate_token.outputs.token }}
+      # Setting up Node, 18 is LTS
+      - name: "Setting up Node"
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      # Make sure all the dependencies are ok and installed
+      - name: "Installing dependencies"
+        run: npm ci
+      - name: "Verifying the signatures"
+        run: npm audit signatures
+      # Install semantic release
+      - name: "Releasing via Semantic Release"
+        run: npx semantic-release@23
+        env:
+          GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}

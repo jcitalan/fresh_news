@@ -1,0 +1,32 @@
+{
+	"settings": {
+		"editor.trimAutoWhitespace": true,
+		"files.trimTrailingWhitespace": true,
+		"files.insertFinalNewline": true,
+		"python.analysis.typeCheckingMode": "strict",
+		"[python]": {
+			"editor.defaultFormatter": "ms-python.black-formatter",
+			"editor.codeActionsOnSave": {
+				"source.fixAll": "explicit",
+				"source.organizeImports": "explicit"
+			},
+			"editor.formatOnSave": true,
+		},
+		"editor.rulers": [
+			120
+		],
+		"python.terminal.activateEnvironment": false,
+	},
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"extensions": {
+		"recommendations": [
+			"tamasfe.even-better-toml",
+			"ms-python.black-formatter",
+			"robocorp.robocorp-code"
+		]
+	}
+}
