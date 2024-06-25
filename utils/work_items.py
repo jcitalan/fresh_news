@@ -28,9 +28,24 @@ class WorkItemHandler:
             ValueError: If no current work item or if the payload is None.
         """
         item = self.wi.inputs.current
+        print(item)
         if item is None or item.payload is None:
             raise ValueError("No current work item found or payload is None")
-        return Payload.from_dict(item.payload)
+        if item.payload:
+            return Payload.from_dict(item.payload)
+
+        # Check for the presence of search_phrase, topic, and months in item.payload
+        if isinstance(item.payload, dict):
+            if all(key in item.payload for key in ["search_phrase", "topic", "months"]):
+                new_payload = Payload(
+                    search_phrase=item.payload["search_phrase"],
+                    topic=item.payload["topic"],
+                    months=item.payload["months"],
+                )
+                self.update_payload(new_payload)
+                return self.get_current_payload()
+
+        raise ValueError("No valid payload found and required keys are missing")
 
     def update_payload(self, new_payload: Payload) -> None:
         """
