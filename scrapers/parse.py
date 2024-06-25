@@ -10,6 +10,11 @@ from .news import News
 class ParserNews:
     @log_decorator
     def _generate_excel_file(self, data: List[News]):
+        """
+        Generate an Excel file with the provided news data.
+
+        :param data: List of News objects containing news information.
+        """
         header = [
             "title",
             "date",
@@ -35,10 +40,17 @@ class ParserNews:
 
         lib = Files()
         output_path = Path("./output/news_data.xlsx")
+        output_path.parent.mkdir(parents=True, exist_ok=True)
         lib.create_workbook(str(output_path), fmt="xlsx", sheet_name="News Data")
         lib.append_rows_to_worksheet(excel_data, name="News Data")
         lib.save_workbook()
+        self.log.info(f"Excel file created at {output_path}")
 
     @log_decorator
     def parse(self, data: List[News]):
+        """
+        Parse the news data and generate an Excel file.
+
+        :param data: List of News objects containing news information.
+        """
         self._generate_excel_file(data)

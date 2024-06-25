@@ -7,14 +7,20 @@ from utils.browsers import SeleniumBrowser
 @task
 def Scraping():
     """
+    Main task function to perform the scraping operation.
+
     TODO: Implement the logic for the task.
     """
-
-    with SeleniumBrowser(
-        browser_settings={
-            "headless": False,
-            "options": BROWSER_OPTIONS,
-            "maximized": True,
-        }
-    ) as browser:
-        _ = AngelesTimesScraper(browser=browser).extract()
+    try:
+        with SeleniumBrowser(
+            browser_settings={
+                "headless": True,
+                "options": BROWSER_OPTIONS,
+                "maximized": True,
+            }
+        ) as browser:
+            scraper = AngelesTimesScraper(browser=browser)
+            scraper.extract()
+    except Exception as e:
+        print(f"Error during scraping task: {e}")
+        raise

@@ -30,6 +30,12 @@ LOG_COLORS = {
 # Custom formatter to include colors
 class CustomFormatter(logging.Formatter):
     def format(self, record):
+        """
+        Format the log record with ANSI colored log levels.
+
+        :param record: LogRecord object to format.
+        :return: Formatted log message.
+        """
         record.asctime = datetime.fromtimestamp(record.created).strftime(
             "%Y-%m-%d %H:%M:%S"
         )
@@ -75,11 +81,22 @@ logger.addHandler(console_handler)
 
 
 def log_decorator(func):
-    """Decorator function to log function calls and exceptions."""
+    """
+    Decorator function to log function calls and exceptions.
+
+    :param func: Function to decorate.
+    :return: Decorated function.
+    """
 
     @wraps(func)
     def wrapper(*args, **kwargs):
-        """Wrapper function to log function calls and exceptions."""
+        """
+        Wrapper function to log function calls and exceptions.
+
+        :param args: Positional arguments for the function.
+        :param kwargs: Keyword arguments for the function.
+        :return: Result of the decorated function.
+        """
         logger.info(
             f"Started function '{func.__name__}' with args {args} and kwargs {kwargs}"
         )

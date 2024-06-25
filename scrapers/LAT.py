@@ -24,6 +24,11 @@ from .schemas.sort_option import Sort_By
 
 class AngelesTimesScraper(ParserNews):
     def __init__(self, browser: Selenium):
+        """
+        Initialize the scraper with the browser and necessary handlers.
+
+        :param browser: Selenium instance used for browsing.
+        """
         super().__init__()
         self._browser = browser
         self.payload_handler = WorkItemHandler().get_current_payload()
@@ -33,7 +38,14 @@ class AngelesTimesScraper(ParserNews):
     @log_decorator
     @retry(stop=3, wait=2000)
     def _extract_news_images(self, data: List[News]):
+        """
+        Download news images and save them locally.
+
+        :param data: List of News objects containing news information.
+        """
         output_directory = Path("./output")
+        output_directory.mkdir(exist_ok=True)
+
         for news in data:
             if not news.image_src:
                 continue
@@ -46,13 +58,20 @@ class AngelesTimesScraper(ParserNews):
             try:
                 self.requests.download(news.image_src, str(file_path))
                 news.image_file_name = file_name
-            except Exception:
-                self.log.error(f"Failed to download image for news item {news}")
+                self.log.info(f"Image downloaded for news item {news.title}")
+            except Exception as e:
+                self.log.error(f"Failed to download image for news item {news}: {e}")
                 time.sleep(5)  # Wait for 5 seconds before trying again
 
     @log_decorator
     @retry(stop=3, wait=2000)
     def _get_news_data(self, number_of_months: int = 1) -> List[News]:
+        """
+        Extract news data from the website.
+
+        :param number_of_months: Number of months to consider for extraction.
+        :return: List of News objects containing news information.
+        """
         self._browser.wait_for_condition(
             'return document.readyState == "complete"', timeout=30
         )
@@ -63,6 +82,7 @@ class AngelesTimesScraper(ParserNews):
                 )
             except Exception:
                 self.log.info("No results found, we have data to scrape")
+
             result = self._browser.get_element_count(XPATH_SELECTORS["menu_no_results"])
             if result > 0:
                 return [{"No results found": "No results found"}]
@@ -110,25 +130,12 @@ class AngelesTimesScraper(ParserNews):
                         XPATH_SELECTORS["menu_search_results_img"].format(count=i),
                         "src",
                     )
-                    # results_path = utils.download_image(img_url, self.output_path)
 
                     date = parser.parse(date, fuzzy=True)
-                    # checking if the date is within the range
-                    print(f"Start date: {start_date} End date: {date}")
+                    self.log.info(f"Start date: {start_date} End date: {date}")
                     if date < start_date:
                         return list_news
-                    # list_news.append(
-                    #     {
-                    #         "title": title,
-                    #         "date": date.strftime("%m/%d/%Y"),
-                    #         "description": description,
-                    #         "img_path": img_url,
-                    #         "qty_phrases": count_phrases(
-                    #             self.payload_handler.search_phrase, title, description
-                    #         ),
-                    #         "contains_money": contains_money(title, description),
-                    #     }
-                    # )
+
                     list_news.append(
                         News(
                             search_phrase=self.payload_handler.search_phrase,
@@ -143,11 +150,18 @@ class AngelesTimesScraper(ParserNews):
                 self._browser.click_element(XPATH_SELECTORS["btn_next_page"])
             return list_news
         except Exception as e:
-            print(e)
+            self.log.error(f"Error extracting news data: {e}")
+            return []
 
     @log_decorator
     @retry(stop=3, wait=2000)
     def _get_news(self, number_of_months: int) -> List[News]:
+        """
+        Get news and their images.
+
+        :param number_of_months: Number of months to consider for extraction.
+        :return: List of News objects containing news information.
+        """
         news = self._get_news_data(number_of_months)
         self._extract_news_images(news)
         return news
@@ -155,6 +169,11 @@ class AngelesTimesScraper(ParserNews):
     @log_decorator
     @retry(stop=3, wait=2000)
     def _got_to_sort_items(self, sort_option: int = 1):
+        """
+        Sort items according to the selected option.
+
+        :param sort_option: Sorting option.
+        """
         try:
             self._browser.select_from_list_by_value(
                 XPATH_SELECTORS["search_page_sort"], sort_option
@@ -163,12 +182,15 @@ class AngelesTimesScraper(ParserNews):
                 'return document.readyState == "complete"', timeout=30
             )
         except Exception as e:
-            print(e)
+            self.log.error(f"Error sorting items: {e}")
 
     @log_decorator
     @retry(stop=3, wait=2000)
     def _go_to_search_topic(self):
-        print(f"Topic: {self.payload_handler.topic}")
+        """
+        Navigate to the search page for the specified topic.
+        """
+        self.log.info(f"Topic: {self.payload_handler.topic}")
         try:
             self._browser.wait_for_condition(
                 'return document.readyState == "complete"', timeout=50
@@ -180,7 +202,7 @@ class AngelesTimesScraper(ParserNews):
                 )
             )
             if topic_exist < 1:
-                print(f"Topic {self.payload_handler.topic} not found")
+                self.log.warning(f"Topic {self.payload_handler.topic} not found")
             else:
                 self._browser.wait_until_element_is_enabled(
                     XPATH_SELECTORS["news_input_topic"].format(
@@ -198,11 +220,14 @@ class AngelesTimesScraper(ParserNews):
                 )
                 time.sleep(2)
         except Exception as e:
-            print(e)
+            self.log.error(f"Error navigating to search topic: {e}")
 
     @log_decorator
     @retry(stop=3, wait=2000)
     def _go_to_search_page(self):
+        """
+        Navigate to the search page.
+        """
         try:
             wait_for_element_and_click(
                 self._browser, XPATH_SELECTORS["news_search_button"]
@@ -215,33 +240,41 @@ class AngelesTimesScraper(ParserNews):
                 self._browser, XPATH_SELECTORS["news_search_submit"]
             )
         except Exception as e:
-            print(e)
+            self.log.error(f"Error navigating to search page: {e}")
             raise
 
     @log_decorator
     @retry(stop=3, wait=2000)
     def _go_to_main_page(self):
+        """
+        Navigate to the main page.
+        """
         try:
             self._browser.go_to(BASE_URL)
         except Exception as e:
-            print(e)
+            self.log.error(f"Error navigating to main page: {e}")
             raise
 
     @log_decorator
     @retry(stop=3, wait=2000)
     def _scroll_down_once(self):
+        """
+        Scroll down the page once.
+        """
         try:
-            # Scroll hacia abajo en el navegador
             self._browser.execute_javascript("window.scrollBy(0, window.innerHeight);")
             self._browser.execute_javascript(
                 'document.querySelectorAll("video").forEach(ad => ad.style.display = "none");'
             )
         except Exception as e:
-            print(e)
+            self.log.error(f"Error scrolling down: {e}")
             raise
 
     @log_decorator
     def extract(self):
+        """
+        Main method to extract news.
+        """
         try:
             self._go_to_main_page()
             self._scroll_down_once()
@@ -253,4 +286,4 @@ class AngelesTimesScraper(ParserNews):
             self.parse(news)
             time.sleep(5)
         except Exception as e:
-            print(e)
+            self.log.error(f"Error in extraction process: {e}")
