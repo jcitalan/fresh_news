@@ -1,0 +1,79 @@
+branches:
+  - main
+debug: false
+ci: True
+preset: "angular"
+tagFormat: "v${version}"
+plugins:
+  - "@semantic-release/commit-analyzer"
+  - "@semantic-release/release-notes-generator"
+  - "@semantic-release/changelog"
+  - "@semantic-release/git"
+  - "@semantic-release/github"
+  - "@semantic-release/exec"
+
+verifyConditions:
+  - "@semantic-release/git"
+  - "@semantic-release/github"
+
+analyzeCommits:
+  - path: "@semantic-release/commit-analyzer"
+    releaseRules:
+      - type: "feat"
+        release: "patch"
+      - type: "patch"
+        release: "patch"
+      - type: "minor"
+        release: "minor"
+      - type: "breaking"
+        release: "major"
+
+generateNotes:
+  - path: "@semantic-release/release-notes-generator"
+    writerOpts:
+      groupBy: "type"
+      commitGroupsSort:
+        - "feat"
+        - "perf"
+        - "fix"
+      commitsSort: "header"
+    types:
+      - type: "feat"
+      - section: "Features"
+      - type: "fix"
+      - hidden: true
+      - type: "chore"
+      - hidden: true
+      - type: "docs"
+      - hidden: true
+      - type: "doc"
+      - hidden: true
+      - type: "style"
+      - hidden: true
+      - type: "refactor"
+      - hidden: true
+      - type: "perf"
+      - hidden: true
+      - type: "test"
+      - hidden: true
+    presetConfig: true
+prepare:
+  - path: "@semantic-release/exec"
+    cmd: sh set_version.sh ${nextRelease.version}
+  - path: "@semantic-release/changelog"
+    changelogFile: "CHANGELOG.md"
+  - path: "@semantic-release/git"
+    assets:
+      - "CHANGELOG.md"
+      - "package.json"
+      - "package-lock.json"
+      - "scrapers/__init__.py"
+    message: "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+publish:
+  - path: "@semantic-release/github"
+
+success:
+  - "@semantic-release/github"
+
+fail:
+  - "@semantic-release/github"
