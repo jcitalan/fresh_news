@@ -59,6 +59,6 @@ jobs:
         run: npm audit signatures
       # Install semantic release
       - name: "Releasing via Semantic Release"
-        run: npx semantic-release@23
+        run: npx semantic-release@24
         env:
           GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
