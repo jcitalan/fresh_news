@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/jcitalan/fresh_news/compare/v1.0.0...v1.0.1) (2024-06-25)
+
+
+### Bug Fixes
+
+* work items updating when don pass a payload ([1335337](https://github.com/jcitalan/fresh_news/commit/1335337143796749b18281bd4bcec6afd348767f))
+
 # 1.0.0 (2024-06-25)
 
 
