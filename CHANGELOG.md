@@ -1,3 +1,10 @@
+## [1.0.4](https://github.com/jcitalan/fresh_news/compare/v1.0.3...v1.0.4) (2024-06-26)
+
+
+### Bug Fixes
+
+* set headless ([b3feeb8](https://github.com/jcitalan/fresh_news/commit/b3feeb82d71fcccab4396c641fb168f3d9b86494))
+
 ## [1.0.3](https://github.com/jcitalan/fresh_news/compare/v1.0.2...v1.0.3) (2024-06-26)
 
 
