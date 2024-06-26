@@ -1,3 +1,17 @@
+## [1.0.3](https://github.com/jcitalan/fresh_news/compare/v1.0.2...v1.0.3) (2024-06-26)
+
+
+### Bug Fixes
+
+* adding some steps ([b084860](https://github.com/jcitalan/fresh_news/commit/b084860c897e247936c92dcdfcaefbed4dd24999))
+* re size images ([2ee5fac](https://github.com/jcitalan/fresh_news/commit/2ee5fac303aa0e867c082efafd9533d0a3f542b9))
+* styling ([5c36fbe](https://github.com/jcitalan/fresh_news/commit/5c36fbe1b9374b2e93736d73c4c540b59e89637c))
+
+
+### Features
+
+* updating readme with some steps to make a good deploy ([fa80429](https://github.com/jcitalan/fresh_news/commit/fa804297b81062af2227820ff60b1957f2647af0))
+
 ## [1.0.2](https://github.com/jcitalan/fresh_news/compare/v1.0.1...v1.0.2) (2024-06-26)
 
 
