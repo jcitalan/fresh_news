@@ -14,7 +14,7 @@ def Scraping():
     try:
         with SeleniumBrowser(
             browser_settings={
-                "headless": False,
+                "headless": True,
                 "options": BROWSER_OPTIONS,
                 "maximized": True,
             }
