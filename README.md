@@ -1,7 +1,7 @@
 # RPA Challenge 2.0 - Fresh News
 
 The challenge is to automate the process of extracting data from the news website
-[Angeles Time](https://www.latimes.com/). The final output will be a directory in ./output/results containing Excel files with the extracted data and the corresponding news images.
+[Angeles Time](https://www.latimes.com/). The final output will be a directory in ./output/ containing Excel files with the extracted data and the corresponding news images.
 
 ### Recommended VS Code Plugins
 
@@ -24,16 +24,17 @@ To add parameters in Robocloud, you can use the following methods:
 ### Method 1: Using a Key Called `payload`
 To pass parameters through a single key called `payload`, you can follow this structure:
 
+<div style="text-align: center;">
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./docs/images/payload.webp">
-  <img alt="Payload Key Example" src="./docs/images/payload.webp" width="500">
+  <img alt="Payload Key Example" src="./docs/images/payload.webp" width="500" style="border: 1px solid white;">
 </picture>
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./docs/images/payload_details.webp">
-  <img alt="Payload Details Example" src="./docs/images/payload_details.webp" width="500">
+  <img alt="Payload Details Example" src="./docs/images/payload_details.webp" width="500" style="border: 1px solid white;">
 </picture>
-
+</div>
 
 ### Method 2: Using Separate Keys
 Alternatively, you can pass parameters using three separate keys: `search_phrase`, `topic`, and `months`. This approach provides more granularity and flexibility.
