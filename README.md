@@ -57,3 +57,6 @@ To keep branch names informative and consistent, these are the conventions for v
 * `fix/*` - Bug fixes
 
 Pushing to a different branch will fail CI, but if more branch types are required we can easily expand the list.
+---
+
+Keep coding and creating! never stop learn. 🚀✨
