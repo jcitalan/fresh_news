@@ -1,3 +1,11 @@
+## [1.0.2](https://github.com/jcitalan/fresh_news/compare/v1.0.1...v1.0.2) (2024-06-26)
+
+
+### Bug Fixes
+
+* cleaning code and re factor some stuffs ([41cca03](https://github.com/jcitalan/fresh_news/commit/41cca03dc451b61ccfd526eb8d8746b39b5e9ab3))
+* refactor a litte bit of selector and added some validation to continue scraping ([4d829fe](https://github.com/jcitalan/fresh_news/commit/4d829feca70c717e43f09a4a49905166c837000f))
+
 ## [1.0.1](https://github.com/jcitalan/fresh_news/compare/v1.0.0...v1.0.1) (2024-06-25)
 
 
