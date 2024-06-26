@@ -26,12 +26,12 @@ To pass parameters through a single key called `payload`, you can follow this st
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./docs/images/payload.webp">
-  <img alt="Payload Key Example" src="./docs/images/payload.webp">
+  <img alt="Payload Key Example" src="./docs/images/payload.webp" width="500">
 </picture>
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./docs/images/payload_details.webp">
-  <img alt="Payload Details Example" src="./docs/images/payload_details.webp">
+  <img alt="Payload Details Example" src="./docs/images/payload_details.webp" width="500">
 </picture>
 
 
@@ -40,7 +40,7 @@ Alternatively, you can pass parameters using three separate keys: `search_phrase
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./docs/images/params.webp">
-  <img alt="Separate Keys Example" src="./docs/images/params.webp">
+  <img alt="Separate Keys Example" src="./docs/images/params.webp" width="500">
 </picture>
 
 ## Branch naming conventions
