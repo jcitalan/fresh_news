@@ -1,7 +1,7 @@
 import hashlib
 import time
 from pathlib import Path
-from typing import List
+from typing import List, Union
 
 from dateutil import parser
 from RPA.Browser.Selenium import Selenium
@@ -15,12 +15,12 @@ from utils import (
     wait_for_element_and_click,
 )
 
-from .constants import BASE_URL, XPATH_SELECTORS
+from .constants import BASE_URL
 from .log import log_decorator, logger
 from .news import News
 from .parse import ParserNews
-from .schemas.selectors import XPathSelectors
 from .schemas.sort_option import Sort_By
+from .selectors import XPathSelectors
 
 
 class AngelesTimesScraper(ParserNews):
@@ -67,7 +67,7 @@ class AngelesTimesScraper(ParserNews):
 
     @log_decorator
     @retry(stop=3, wait=2000)
-    def _get_news_data(self, number_of_months: int = 1) -> List[News]:
+    def _get_news_data(self, number_of_months: int = 1) -> Union[List[News], bool]:
         """
         Extract news data from the website.
 
@@ -80,21 +80,25 @@ class AngelesTimesScraper(ParserNews):
         try:
             try:
                 self._browser.wait_until_element_is_visible(
-                    XPATH_SELECTORS["menu_no_results"], timeout=5
+                    self.xpathselectors.get_menu_no_results(), timeout=5
                 )
             except Exception:
                 self.log.info("No results found, we have data to scrape")
 
-            result = self._browser.get_element_count(XPATH_SELECTORS["menu_no_results"])
-            if result > 0:
-                return [{"No results found": "No results found"}]
+            result = self._browser.get_element_count(
+                self.xpathselectors.get_menu_no_results()
+            )
+            if result > 0 and result < 2:
+                return False
 
             start_date = get_month_range(number_of_months)
             list_news = []
             self._browser.wait_until_element_is_visible(
-                XPATH_SELECTORS["label_page_counts"], timeout=30
+                self.xpathselectors.get_label_page_counts(), timeout=30
             )
-            page_count = self._browser.get_text(XPATH_SELECTORS["label_page_counts"])
+            page_count = self._browser.get_text(
+                self.xpathselectors.get_label_page_counts()
+            )
             page_count = page_count.strip().replace(",", "").split(" ")[-1]
 
             for j in range(1, int(page_count) + 1):
@@ -103,21 +107,21 @@ class AngelesTimesScraper(ParserNews):
                     'return document.readyState == "complete"', timeout=30
                 )
                 self._browser.wait_until_element_is_visible(
-                    XPATH_SELECTORS["menu_search_results"], timeout=30
+                    self.xpathselectors.get_menu_search_results(), timeout=30
                 )
                 results_per_page = self._browser.get_element_count(
-                    XPATH_SELECTORS["menu_search_results"]
+                    self.xpathselectors.get_menu_search_results()
                 )
                 for i in range(1, results_per_page + 1):
                     date = self._browser.get_text(
-                        XPATH_SELECTORS["menu_search_results_timestamp"].format(count=i)
+                        self.xpathselectors.get_menu_search_results_timestamp(count=i)
                     )
                     title = self._browser.get_text(
-                        XPATH_SELECTORS["menu_search_results_title"].format(count=i)
+                        self.xpathselectors.get_menu_search_results_title(count=i)
                     )
                     try:
                         description = self._browser.get_text(
-                            XPATH_SELECTORS["menu_search_results_description"].format(
+                            self.xpathselectors.get_menu_search_results_description(
                                 count=i
                             )
                         )
@@ -125,11 +129,11 @@ class AngelesTimesScraper(ParserNews):
                         description = ""
 
                     self._browser.wait_until_element_is_visible(
-                        XPATH_SELECTORS["menu_search_results_img"].format(count=i),
+                        self.xpathselectors.get_menu_search_results_img(count=i),
                         timeout=30,
                     )
                     img_url = self._browser.get_element_attribute(
-                        XPATH_SELECTORS["menu_search_results_img"].format(count=i),
+                        self.xpathselectors.get_menu_search_results_img(count=i),
                         "src",
                     )
 
@@ -149,7 +153,7 @@ class AngelesTimesScraper(ParserNews):
                     )
                 if j == 10:
                     break
-                self._browser.click_element(XPATH_SELECTORS["btn_next_page"])
+                self._browser.click_element(self.xpathselectors.get_btn_next_page())
             return list_news
         except Exception as e:
             self.log.error(f"Error extracting news data: {e}")
@@ -157,7 +161,7 @@ class AngelesTimesScraper(ParserNews):
 
     @log_decorator
     @retry(stop=3, wait=2000)
-    def _get_news(self, number_of_months: int) -> List[News]:
+    def _get_news(self, number_of_months: int) -> Union[List[News], bool]:
         """
         Get news and their images.
 
@@ -165,6 +169,10 @@ class AngelesTimesScraper(ParserNews):
         :return: List of News objects containing news information.
         """
         news = self._get_news_data(number_of_months)
+        if isinstance(news, bool):
+            if not news:  # No results found
+                self.log.info("No news data found")
+                return False
         self._extract_news_images(news)
         return news
 
@@ -178,7 +186,7 @@ class AngelesTimesScraper(ParserNews):
         """
         try:
             self._browser.select_from_list_by_value(
-                XPATH_SELECTORS["search_page_sort"], sort_option
+                self.xpathselectors.get_search_page_sort(), sort_option
             )
             self._browser.wait_for_condition(
                 'return document.readyState == "complete"', timeout=30
@@ -199,7 +207,7 @@ class AngelesTimesScraper(ParserNews):
             )
 
             topic_exist = self._browser.get_element_count(
-                XPATH_SELECTORS["news_input_topic"].format(
+                self.xpathselectors.get_news_input_topic(
                     topic=self.payload_handler.topic
                 )
             )
@@ -207,13 +215,13 @@ class AngelesTimesScraper(ParserNews):
                 self.log.warning(f"Topic {self.payload_handler.topic} not found")
             else:
                 self._browser.wait_until_element_is_enabled(
-                    XPATH_SELECTORS["news_input_topic"].format(
+                    self.xpathselectors.get_news_input_topic(
                         topic=self.payload_handler.topic
                     ),
                     timeout=30,
                 )
                 self._browser.click_element(
-                    XPATH_SELECTORS["news_input_topic"].format(
+                    self.xpathselectors.get_news_input_topic(
                         topic=self.payload_handler.topic
                     )
                 )
@@ -232,14 +240,14 @@ class AngelesTimesScraper(ParserNews):
         """
         try:
             wait_for_element_and_click(
-                self._browser, XPATH_SELECTORS["news_search_button"]
+                self._browser, self.xpathselectors.get_news_search_button()
             )
             self._browser.input_text(
-                XPATH_SELECTORS["news_search_input"],
+                self.xpathselectors.get_news_search_input(),
                 self.payload_handler.search_phrase,
             )
             wait_for_element_and_click(
-                self._browser, XPATH_SELECTORS["news_search_submit"]
+                self._browser, self.xpathselectors.get_news_search_submit()
             )
         except Exception as e:
             self.log.error(f"Error navigating to search page: {e}")
@@ -285,7 +293,10 @@ class AngelesTimesScraper(ParserNews):
             self._got_to_sort_items(sort_option=Sort_By.NEWEST)
             time.sleep(5)
             news = self._get_news(number_of_months=self.payload_handler.months)
-            self.parse(news)
-            time.sleep(5)
+            if isinstance(news, bool):
+                if not news:
+                    self.log.info("No news data found")
+            else:
+                self.parse(news)
         except Exception as e:
             self.log.error(f"Error in extraction process: {e}")
