@@ -19,6 +19,7 @@ from .constants import BASE_URL, XPATH_SELECTORS
 from .log import log_decorator, logger
 from .news import News
 from .parse import ParserNews
+from .schemas.selectors import XPathSelectors
 from .schemas.sort_option import Sort_By
 
 
@@ -34,6 +35,7 @@ class AngelesTimesScraper(ParserNews):
         self.payload_handler = WorkItemHandler().get_current_payload()
         self.requests = HTTP()
         self.log = logger
+        self.xpathselectors = XPathSelectors()
 
     @log_decorator
     @retry(stop=3, wait=2000)

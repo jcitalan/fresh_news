@@ -11,11 +11,6 @@ BROWSER_OPTIONS = [
     "--disable-logging",
     "--disable-extensions",
 ]
-PREFS = {
-    "profile.managed_default_content_settings.images": 2,  # Block images
-    "profile.managed_default_content_settings.video": 2,  # Block videos
-    "profile.managed_default_content_settings.javascript": 1,  # Allow JavaScript
-}
 
 XPATH_SELECTORS = {
     "news_search_button": 'xpath://button[@data-element="search-button"]',
