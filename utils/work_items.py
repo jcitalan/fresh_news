@@ -28,7 +28,6 @@ class WorkItemHandler:
             ValueError: If no current work item or if the payload is None.
         """
         item = self.wi.inputs.current
-        print(item)
         if item is None or item.payload is None:
             raise ValueError("No current work item found or payload is None")
         if item.payload:
