@@ -1,3 +1,10 @@
+## [1.0.6](https://github.com/jcitalan/fresh_news/compare/v1.0.5...v1.0.6) (2024-06-26)
+
+
+### Features
+
+* updating black action ([41bb067](https://github.com/jcitalan/fresh_news/commit/41bb0675e1176cf1a1a459ca10f95d499d6291b5))
+
 ## [1.0.5](https://github.com/jcitalan/fresh_news/compare/v1.0.4...v1.0.5) (2024-06-26)
 
 
