@@ -1,3 +1,10 @@
+## [1.0.5](https://github.com/jcitalan/fresh_news/compare/v1.0.4...v1.0.5) (2024-06-26)
+
+
+### Bug Fixes
+
+* updating readme about workitems ([7e5d51f](https://github.com/jcitalan/fresh_news/commit/7e5d51f235b372cc761f0c57e9d2288db3d1ba9f))
+
 ## [1.0.4](https://github.com/jcitalan/fresh_news/compare/v1.0.3...v1.0.4) (2024-06-26)
 
 

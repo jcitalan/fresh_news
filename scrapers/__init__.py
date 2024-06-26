@@ -7,4 +7,4 @@ __all__ = [
     "BROWSER_OPTIONS",
 ]
 __author__ = "Josue Citalan"
-__version__ = "1.0.4"
+__version__ = "1.0.5"
